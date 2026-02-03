@@ -57,45 +57,48 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 // Candidate paths for widget/dist
+// Candidate paths for widget/dist
 const candidates = [
   path.resolve(__dirname, '../../widget/dist'), // Local development with dist structure
   path.resolve(__dirname, '../widget/dist'),    // Potential flattened structure
   path.join(process.cwd(), 'widget/dist'),      // Vercel root?
   path.join(process.cwd(), '../widget/dist'),   // Local CWD
+  path.join(process.cwd(), 'dist'),             // Sometimes vercel flattens here
 ]
 
-const widgetDist = candidates.find((p) => fs.existsSync(p))
-const widgetIndex = widgetDist ? path.join(widgetDist, 'index.html') : null
+// Always register routes, decide at runtime if we can serve
+const sendIndex = (_req: express.Request, res: express.Response) => {
+  const connectionString = (candidates.find((p) => fs.existsSync(p)))
+  const indexFile = connectionString ? path.join(connectionString, 'index.html') : null
 
-if (widgetDist && widgetIndex && fs.existsSync(widgetIndex)) {
-  // Vite build uses base '/embed/' so assets live under /embed/assets/...
-  app.use('/embed', express.static(widgetDist, { redirect: false }))
-  app.use('/widget', express.static(widgetDist, { redirect: false }))
-
-  const sendIndex = (_req: express.Request, res: express.Response) => {
-    res.sendFile(widgetIndex)
+  if (indexFile && fs.existsSync(indexFile)) {
+    return res.sendFile(indexFile)
   }
 
-  // Express 5 (path-to-regexp) no acepta '/path/*' como string literal.
-  app.get(/^\/embed(\/.*)?$/, sendIndex)
-  app.get(/^\/widget(\/.*)?$/, sendIndex)
-  app.get(/^\/dashboard(\/.*)?$/, sendIndex)
-} else {
-  logger.warn(
-    { candidates, cwd: process.cwd() },
-    'widget dist not found; run `npm --prefix widget run build`',
-  )
-
-  // Fallback route to debug path issues in production
-  app.get('/debug-paths', (_req, res) => {
-    res.json({
-      error: 'Widget dist not found',
-      cwd: process.cwd(),
-      __dirname,
-      candidates
-    })
-  })
+  // Fallback if not found: Show debug info directly in browser
+  res.status(404).type('text/html').send(`
+    <h1>Dashboard Error: Frontend not found</h1>
+    <p>Could not locate index.html in any of these paths:</p>
+    <ul>${candidates.map(c => `<li>${c}</li>`).join('')}</ul>
+    <p><strong>CWD:</strong> ${process.cwd()}</p>
+    <p><strong>__dirname:</strong> ${__dirname}</p>
+  `)
 }
+
+// Register static serving if a path is found globally (optimization)
+const staticPath = candidates.find((p) => fs.existsSync(p))
+if (staticPath) {
+  app.use('/embed', express.static(staticPath, { redirect: false }))
+  app.use('/widget', express.static(staticPath, { redirect: false }))
+}
+
+// Always handle these routes - Vercel will route here, we handle the response
+app.get(/^\/embed(\/.*)?$/, sendIndex)
+app.get(/^\/widget(\/.*)?$/, sendIndex)
+app.get(/^\/dashboard(\/.*)?$/, sendIndex)
+app.get('/debug-paths', (_req, res) => {
+  res.json({ candidates, cwd: process.cwd(), __dirname, found: staticPath || 'none' })
+})
 
 app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   logger.error({ err }, 'unhandled_error')
