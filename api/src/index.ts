@@ -52,13 +52,22 @@ app.use((req, res, next) => {
 const supabase = createSupabase(env)
 registerRoutes(app, env, supabase)
 
-// Static serving: widget build (Vite) under the SAME Express app (single URL deploy).
+// Static serving: widget build (Vite) under the SAME Express app.
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const widgetDist = path.resolve(__dirname, '../../widget/dist')
-const widgetIndex = path.join(widgetDist, 'index.html')
 
-if (fs.existsSync(widgetIndex)) {
+// Candidate paths for widget/dist
+const candidates = [
+  path.resolve(__dirname, '../../widget/dist'), // Local development with dist structure
+  path.resolve(__dirname, '../widget/dist'),    // Potential flattened structure
+  path.join(process.cwd(), 'widget/dist'),      // Vercel root?
+  path.join(process.cwd(), '../widget/dist'),   // Local CWD
+]
+
+const widgetDist = candidates.find((p) => fs.existsSync(p))
+const widgetIndex = widgetDist ? path.join(widgetDist, 'index.html') : null
+
+if (widgetDist && widgetIndex && fs.existsSync(widgetIndex)) {
   // Vite build uses base '/embed/' so assets live under /embed/assets/...
   app.use('/embed', express.static(widgetDist, { redirect: false }))
   app.use('/widget', express.static(widgetDist, { redirect: false }))
@@ -73,9 +82,19 @@ if (fs.existsSync(widgetIndex)) {
   app.get(/^\/dashboard(\/.*)?$/, sendIndex)
 } else {
   logger.warn(
-    { widgetDist },
+    { candidates, cwd: process.cwd() },
     'widget dist not found; run `npm --prefix widget run build`',
   )
+
+  // Fallback route to debug path issues in production
+  app.get('/debug-paths', (_req, res) => {
+    res.json({
+      error: 'Widget dist not found',
+      cwd: process.cwd(),
+      __dirname,
+      candidates
+    })
+  })
 }
 
 app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
