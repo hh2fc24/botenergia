@@ -1,0 +1,15 @@
+{
+  "name": "energybot-embed",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Widget embebible + API para capturar leads y derivar a WhatsApp.",
+  "scripts": {
+    "dev": "concurrently -n api,widget -c blue,green \"npm --prefix api run dev\" \"npm --prefix widget run dev\"",
+    "build": "npm --prefix widget run build && npm --prefix api run build",
+    "start": "npm --prefix api run start"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
+
