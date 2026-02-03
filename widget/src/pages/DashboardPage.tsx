@@ -58,9 +58,18 @@ export default function DashboardPage() {
             Sin auth por ahora. Para producción, agrega auth en el backend antes de exponer este endpoint.
           </p>
         </div>
-        <button className="eb-btn" onClick={() => void refresh()} disabled={loading}>
-          {loading ? 'Cargando…' : 'Actualizar'}
-        </button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button
+            className="eb-btn"
+            style={{ backgroundColor: '#2563eb', color: '#fff' }}
+            onClick={() => window.open('/widget', '_blank')}
+          >
+            Probar Bot 🤖
+          </button>
+          <button className="eb-btn" onClick={() => void refresh()} disabled={loading}>
+            {loading ? 'Cargando…' : 'Actualizar'}
+          </button>
+        </div>
       </header>
 
       <section className="eb-dashboard__filters">
