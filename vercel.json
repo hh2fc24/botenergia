@@ -13,7 +13,27 @@
     ],
     "routes": [
         {
-            "src": "/(.*)",
+            "src": "/embed/(.*)",
+            "dest": "/api/src/index.ts"
+        },
+        {
+            "src": "/widget/(.*)",
+            "dest": "/api/src/index.ts"
+        },
+        {
+            "src": "/dashboard/(.*)",
+            "dest": "/api/src/index.ts"
+        },
+        {
+            "src": "/v1/(.*)",
+            "dest": "/api/src/index.ts"
+        },
+        {
+            "src": "/debug-paths",
+            "dest": "/api/src/index.ts"
+        },
+        {
+            "src": "/",
             "dest": "/api/src/index.ts"
         }
     ]
