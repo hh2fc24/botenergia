@@ -5,7 +5,7 @@
   "description": "Widget embebible + API para capturar leads y derivar a WhatsApp.",
   "scripts": {
     "dev": "concurrently -n api,widget -c blue,green \"npm --prefix api run dev\" \"npm --prefix widget run dev\"",
-    "build": "npm --prefix widget run build && npm --prefix api run build && mkdir -p api/dist/public && cp -r widget/dist/* api/dist/public/ && mkdir -p api/src/public && cp -r widget/dist/* api/src/public/ && mkdir -p public",
+    "build": "npm --prefix widget run build && npm --prefix api run build && mkdir -p api/dist/public && cp -r widget/dist/* api/dist/public/ && mkdir -p api/src/public && cp -r widget/dist/* api/src/public/ && mkdir -p public && cp -r widget/dist/* public/",
     "start": "npm --prefix api run start",
     "postinstall": "npm --prefix api install && npm --prefix widget install"
   },
