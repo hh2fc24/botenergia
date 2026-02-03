@@ -119,7 +119,7 @@ app.get('/debug-paths', (_req, res) => {
     filesInWidgetDist: listDir(path.resolve(process.cwd(), 'widget/dist')),
   })
 })
-}
+
 
 app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   logger.error({ err }, 'unhandled_error')
