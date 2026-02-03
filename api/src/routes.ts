@@ -126,8 +126,9 @@ export function registerRoutes(app: Express, env: Env, supabase: SupabaseClient)
   })
 
   // In case someone hits the api root.
+  // Redirect root to dashboard instead of plain text
   app.get('/', (_req, res) => {
-    res.type('text/plain').send('energybot-embed api')
+    res.redirect('/dashboard/')
   })
 
   // SPA serving (widget build) is registered in src/index.ts.
