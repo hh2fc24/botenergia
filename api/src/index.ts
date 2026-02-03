@@ -64,7 +64,10 @@ const candidates = [
   path.join(process.cwd(), 'widget/dist'),      // Vercel root?
   path.join(process.cwd(), '../widget/dist'),   // Local CWD
   path.join(process.cwd(), 'dist'),             // Sometimes vercel flattens here
-  path.join(__dirname, 'public'),               // Copied directly into dist/public
+  path.join(__dirname, 'public'),               // If running from src or dist with collocated public
+  path.join(__dirname, '../dist/public'),       // If running from src, looking in dist
+  path.join(process.cwd(), 'api/dist/public'),  // From root
+  path.join(process.cwd(), 'api/src/public'),   // From root to src
 ]
 
 // Always register routes, decide at runtime if we can serve
