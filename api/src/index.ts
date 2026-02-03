@@ -96,9 +96,30 @@ if (staticPath) {
 app.get(/^\/embed(\/.*)?$/, sendIndex)
 app.get(/^\/widget(\/.*)?$/, sendIndex)
 app.get(/^\/dashboard(\/.*)?$/, sendIndex)
+// Fallback route to debug path issues in production
 app.get('/debug-paths', (_req, res) => {
-  res.json({ candidates, cwd: process.cwd(), __dirname, found: staticPath || 'none' })
+  const listDir = (dir: string) => {
+    try {
+      if (!fs.existsSync(dir)) return `ENOENT: ${dir}`
+      return fs.readdirSync(dir)
+    } catch (e) {
+      return `Error: ${e}`
+    }
+  }
+
+  res.json({
+    error: 'Widget dist not found',
+    cwd: process.cwd(),
+    __dirname,
+    candidates,
+    filesInCwd: listDir(process.cwd()),
+    filesInApiSrc: listDir(path.resolve(__dirname)),
+    filesInApi: listDir(path.resolve(__dirname, '..')),
+    filesInWidget: listDir(path.resolve(process.cwd(), 'widget')),
+    filesInWidgetDist: listDir(path.resolve(process.cwd(), 'widget/dist')),
+  })
 })
+}
 
 app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   logger.error({ err }, 'unhandled_error')
