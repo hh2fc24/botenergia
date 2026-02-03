@@ -54,9 +54,7 @@ export default function DashboardPage() {
       <header className="eb-dashboard__header">
         <div>
           <h1>Leads (últimos 200)</h1>
-          <p className="eb-muted">
-            Sin auth por ahora. Para producción, agrega auth en el backend antes de exponer este endpoint.
-          </p>
+
         </div>
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
