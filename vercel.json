@@ -1,10 +1,16 @@
 {
     "version": 2,
-    "functions": {
-        "api/src/index.ts": {
-            "includeFiles": "widget/dist/**"
+    "builds": [
+        {
+            "src": "api/src/index.ts",
+            "use": "@vercel/node",
+            "config": {
+                "includeFiles": [
+                    "../../widget/dist/**"
+                ]
+            }
         }
-    },
+    ],
     "routes": [
         {
             "src": "/embed/(.*)",
