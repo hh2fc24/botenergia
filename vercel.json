@@ -7,19 +7,19 @@
     },
     "routes": [
         {
-            "src": "/embed/(.*)",
+            "src": "/embed(?:/(.*))?$",
             "dest": "/api/src/index.ts"
         },
         {
-            "src": "/widget/(.*)",
+            "src": "/widget(?:/(.*))?$",
             "dest": "/api/src/index.ts"
         },
         {
-            "src": "/dashboard/(.*)",
+            "src": "/dashboard(?:/(.*))?$",
             "dest": "/api/src/index.ts"
         },
         {
-            "src": "/v1/(.*)",
+            "src": "/v1(?:/(.*))?$",
             "dest": "/api/src/index.ts"
         },
         {
