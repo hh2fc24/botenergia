@@ -16,7 +16,13 @@ const EnvSchema = z.object({
 export type Env = z.infer<typeof EnvSchema>
 
 export function loadEnv(): Env {
-  const parsed = EnvSchema.safeParse(process.env)
+  // Fallback for Vercel Supabase integration which provides NEXT_PUBLIC_SUPABASE_URL
+  const envVars = {
+    ...process.env,
+    SUPABASE_URL: process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL,
+  }
+
+  const parsed = EnvSchema.safeParse(envVars)
   if (!parsed.success) {
     const issues = parsed.error.issues
       .map((i) => `${i.path.join('.')}: ${i.message}`)
