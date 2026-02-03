@@ -83,6 +83,12 @@ app.use((err: unknown, _req: express.Request, res: express.Response, _next: expr
   res.status(500).json({ error: 'internal_error' })
 })
 
-app.listen(env.PORT, () => {
-  logger.info({ port: env.PORT }, 'listening')
-})
+// Export app for Vercel
+export default app
+
+// Only listen if run directly (entry point)
+if (import.meta.url === `file://${process.argv[1]}`) {
+  app.listen(env.PORT, () => {
+    logger.info({ port: env.PORT }, 'listening')
+  })
+}
