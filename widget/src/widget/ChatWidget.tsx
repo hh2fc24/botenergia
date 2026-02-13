@@ -409,8 +409,8 @@ function LeadForm({
           <button className="eb-chip eb-chip--ghost" onClick={onBack} disabled={loading}>
             Reiniciar
           </button>
-          <button className="eb-btn" onClick={() => void submit()} disabled={loading}>
-            {loading ? 'Guardando…' : 'Continuar'}
+          <button className="eb-btn eb-btn--wa" onClick={() => void submit()} disabled={loading}>
+            {loading ? 'Guardando…' : 'Hablar por Whatsapp'}
           </button>
         </div>
       </div>
