@@ -130,8 +130,19 @@ export default function ChatWidget({ config }: { config: WidgetConfig }) {
   return (
     <>
       {!open ? (
-        <button className="eb-launcher" onClick={() => setOpen(true)} aria-label="Abrir chat">
-          EnergyBot
+        <button className="eb-launcher" onClick={() => setOpen(true)} aria-label="Abrir asistente virtual">
+          <svg
+            className="eb-launcher-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 6C13.66 6 15 7.34 15 9C15 10.66 13.66 12 12 12C10.34 12 9 10.66 9 9C9 7.34 10.34 6 12 6ZM12 17.2C9.5 17.2 7.29 15.92 6 14C7.29 12.08 9.5 10.8 12 10.8C14.5 10.8 16.71 12.08 18 14C16.71 15.92 14.5 17.2 12 17.2Z"
+              fill="currentColor"
+            />
+          </svg>
+          Asistente Virtual
         </button>
       ) : (
         <div className="eb-window" role="dialog" aria-label="EnergyBot">
