@@ -36,6 +36,7 @@ Antes de abrir WhatsApp, SIEMPRE se captura lead (nombre, teléfono obligatorio,
 
 - `PORT=8080`
 - `ALLOWED_ORIGINS=*` (en producción recomendado: lista separada por comas)
+- `ALLOWED_FRAME_ANCESTORS=` (lista separada por comas de sitios que pueden embeber el bot en iframe; ej: `https://ggelectrics.cl,https://www.ggelectrics.cl`)
 - `SUPABASE_URL=`
 - `SUPABASE_SERVICE_ROLE_KEY=`
 - `AI_PROVIDER=openai|gemini|none`

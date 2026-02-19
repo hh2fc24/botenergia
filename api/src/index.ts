@@ -16,7 +16,43 @@ const app = express()
 // Ajusta el número según tu infraestructura (1 suele ser suficiente).
 app.set('trust proxy', 1)
 
-app.use(helmet())
+function parseFrameAncestors(value: string): string[] {
+  const raw = value.trim()
+  if (!raw) return ["'self'"]
+
+  const parts = raw
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+
+  const normalized = new Set<string>()
+  for (const part of parts) {
+    if (part === '*' || part === '"*"') return ['*']
+    if (part === 'none' || part === "'none'") return ["'none'"]
+    if (part === 'self' || part === "'self'") normalized.add("'self'")
+    else normalized.add(part)
+  }
+
+  // Keep 'self' by default unless user explicitly asked for 'none' or '*'.
+  normalized.add("'self'")
+  return [...normalized]
+}
+
+const defaultDirectives = helmet.contentSecurityPolicy.getDefaultDirectives()
+const frameAncestors = parseFrameAncestors(env.ALLOWED_FRAME_ANCESTORS)
+
+app.use(
+  helmet({
+    // X-Frame-Options cannot express multiple allowed parents; rely on CSP `frame-ancestors`.
+    xFrameOptions: false,
+    contentSecurityPolicy: {
+      directives: {
+        ...defaultDirectives,
+        'frame-ancestors': frameAncestors,
+      },
+    },
+  }),
+)
 app.use(express.json({ limit: '256kb' }))
 
 const allowed = env.ALLOWED_ORIGINS.trim()

@@ -6,6 +6,13 @@ dotenv.config()
 const EnvSchema = z.object({
   PORT: z.coerce.number().int().positive().default(8080),
   ALLOWED_ORIGINS: z.string().default('*'),
+  // Coma-separated list of allowed parent origins for iframe embedding (CSP frame-ancestors).
+  // Examples:
+  // - "https://ggelectrics.cl,https://www.ggelectrics.cl"
+  // - "self" (default behavior)
+  // - "none" (disallow all embedding)
+  // - "*" (allow any site to embed; NOT recommended)
+  ALLOWED_FRAME_ANCESTORS: z.string().default(''),
   SUPABASE_URL: z.string().url(),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
   AI_PROVIDER: z.enum(['openai', 'gemini', 'none']).default('none'),
@@ -40,4 +47,3 @@ export function loadEnv(): Env {
 
   return env
 }
-
